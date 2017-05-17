@@ -44,12 +44,12 @@ router.route('/quotes')
   })
   .post(function(req, res) {
     var quote = new Quote(),
-        { user, brand, carPrice, rejected, offer } = req.body,
+        { userName, brand, carPrice, rejected, offer } = req.body,
         date = Date.now()
-    quote.user = user || null
+    quote.userName = userName || null
     quote.brand = brand || null
     quote.carPrice = carPrice || null
-    quote.rejected = rejected || null
+    quote.rejected = rejected
     quote.offer = offer || null
     quote.date = date || null
     quote.save(function(err) {
