@@ -18,24 +18,24 @@ const carOptions = [
   {
     value: 'audi',
     label: 'Audi',
-    price: 250,
+    insurance: 250,
     percentage: 0.3 },
   {
     value: 'bmw',
     label: 'BMW',
-    price: 150,
+    insurance: 150,
     percentage: 0.4
   },
   {
     value: 'porsche',
     label: 'Porsche',
-    price: 500,
+    insurance: 500,
     percentage: 0.7
   },
 ]
 
 const rejectReasons = {
-  priceRange: 'Allowed price range for the car is between 5.000€ and 75.000€.',
+  carPriceRange: 'Allowed price range for the car is between 5.000€ and 75.000€.',
   missingBrand: 'Enter maker of the car.',
   missingPrice: 'Enter price of the car.'
 }
@@ -46,17 +46,21 @@ class App extends Component {
     this.state={
       // Nested component state is clumsy, but reducer would be an overkill
       inputs: {
-        name: { value: null, reject: false },
-        brand: { value: null, reject: false  },
-        price: { value: '', reject: false }
-      }
+        name: { value: '', reject: false },
+        brand: { value: '', reject: false  },
+        carPrice: { value: '', reject: false }
+      },
+      offer: ''
     }
   }
 
-  handleBrandChange = (value) => {
-    let inputs = { ...this.state.inputs }
-    inputs.brand = { value, reject: false }
-    this.setState({ inputs })
+  countPrice = () => {
+    if (this.getErrorMessages()==null) {
+      const { brand, carPrice } = this.state.inputs
+      // Ok nested structure gets a bit confusing here
+      const offer = brand.value.insurance + (brand.value.percentage * carPrice.value)
+      this.setState({ offer })
+    }
   }
 
   getErrorMessages = () => {
@@ -76,10 +80,52 @@ class App extends Component {
     }
   }
 
+  getFormFooter = () => {
+    const { offer } = this.state
+    let button, legend
+    if (!offer) {
+      button =  (
+        <Button bsStyle="success"
+                className="pull-right"
+                onClick={ this.handleSubmit }>
+          Get price!
+        </Button>
+      )
+    } else {
+      button = (
+        <Button bsStyle="primary"
+                className="pull-right"
+                onClick={ this.handleSubmit }>
+          Buy the insurance!
+        </Button>
+      ),
+      legend = (
+          <p>Get insured with <b>{ offer }€</b></p>
+      )
+    }
+    return ( 
+      <Row>
+        <Col xs={ 9 }>
+         { legend }
+        </Col>
+        <Col xs={ 3 }
+             className="pull-right">
+          { button }
+        </Col>
+      </Row>
+    )
+  }
+
+  handleBrandChange = (value) => {
+    let inputs = { ...this.state.inputs }
+    inputs.brand = { value, reject: false }
+    this.setState({ inputs })
+  }
+
   handleNameChange = (value) => {
     let inputs = { ...this.state.inputs }
     inputs.name.value = value
-    this.setState({ inputs })
+    this.setState({ inputs, offer: '' })
   }
 
   handlePriceChange = (value) => {
@@ -87,36 +133,38 @@ class App extends Component {
     if (isNaN(value)||(value.length===1&&value==='0')) {
       return
     } else if ((value.length===1&&value>7)||value>75000) {
-      let reject =  rejectReasons.priceRange
-      inputs.price = { value, reject }
+      let reject =  rejectReasons.carPriceRange
+      inputs.carPrice = { value, reject }
     } else {
       let reject = false;
-      inputs.price = { value, reject }
+      inputs.carPrice = { value, reject }
     }
-    this.setState({ inputs })
+    // Check if anything actually changed
+    this.setState({ inputs, offer: '' })
   }
 
   handleSubmit = () => {
-    const { brand, price } = this.state.inputs
+    const { brand, carPrice } = this.state.inputs
     let inputs = { ...this.state.inputs }
     if (!brand.value) {
       inputs.brand.reject = rejectReasons.missingBrand
     }
-    if (!price.value) {
-      inputs.price.reject = rejectReasons.missingPrice
-    } else if (price.value<5000||price.value>75000) {
-      inputs.price.reject = rejectReasons.priceRange
+    if (!carPrice.value) {
+      inputs.carPrice.reject = rejectReasons.missingPrice
+    } else if (carPrice.value<5000||carPrice.value>75000) {
+      inputs.carPrice.reject = rejectReasons.carPriceRange
     }
-    this.setState({inputs})
+    this.setState({ inputs }, this.countPrice)
   }
 
   render() {
-    const { brand, price } = this.state.inputs
+    const { brand, carPrice } = this.state.inputs
     return (
       <div className="App">
         <Grid>
           <Col className="center-block"
-               sm={ 6 }>
+               style={ { float: 'none' }}
+               sm={ 7 }>
             <FormGroup>
               <ControlLabel>
                 Name of the driver
@@ -134,21 +182,15 @@ class App extends Component {
                       onChange={ this.handleBrandChange }>
               </Select>
             </FormGroup>
-            <FormGroup className={ price.reject ? 'has-error' : '' }>
+            <FormGroup className={ carPrice.reject ? 'has-error' : '' }>
               <ControlLabel>
                 Price at the time of purchase (including VAT)
               </ControlLabel>
               <FormControl placeholder="5.000-75.000€"
-                           value={ price.value }
+                           value={ carPrice.value }
                            onChange={ (e) => this.handlePriceChange(e.target.value) } />
             </FormGroup>
-            <FormGroup>
-              <Button bsStyle="success"
-                      className="pull-right"
-                      onClick={ this.handleSubmit }>
-                Get price!
-              </Button>
-            </FormGroup>
+            { this.getFormFooter() }
             <Clearfix />
             { this.getErrorMessages() }
           </Col>
