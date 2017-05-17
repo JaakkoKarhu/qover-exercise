@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Alert from 'react-bootstrap/lib/Alert';
+import axios from 'axios';
 import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Col from 'react-bootstrap/lib/Col';
@@ -55,13 +56,28 @@ class App extends Component {
   }
 
   countPrice = () => {
-    if (this.getErrorMessages()==null) {
-      const { brand, carPrice } = this.state.inputs
-      // Ok nested structure gets a bit confusing here
-      const offer = brand.value.insurance + ((brand.value.percentage/100) * carPrice.value)
-      const formatted = new Intl.NumberFormat('en-EN').format(offer.toFixed(2));
-      this.setState({ offer:formatted })
+    const { brand, carPrice, name } = this.state.inputs,
+          // Ok nested structure gets a bit confusing here
+          unformatted = brand.value.insurance + ((brand.value.percentage/100) * carPrice.value),
+          offer = new Intl.NumberFormat('en-EN').format(unformatted.toFixed(2)),
+          rejected = this.getErrorMessages()!=null,
+          body = {
+            userName: name.value,
+            brand: brand.value.value,
+            carPrice: carPrice.value,
+            rejected,
+            offer: isNaN(offer) ? '' : offer
+          }
+    if (!rejected) {
+      this.setState({ offer })
     }
+    axios.post('http://localhost:3001/api/quotes', body)
+      .catch((error) => {
+        console.log('Error:', error)
+      }) 
+      .then((lol) => {
+        console.log(lol)
+      })
   }
 
   getErrorMessages = () => {
