@@ -58,8 +58,9 @@ class App extends Component {
     if (this.getErrorMessages()==null) {
       const { brand, carPrice } = this.state.inputs
       // Ok nested structure gets a bit confusing here
-      const offer = brand.value.insurance + (brand.value.percentage * carPrice.value)
-      this.setState({ offer })
+      const offer = brand.value.insurance + ((brand.value.percentage/100) * carPrice.value)
+      const formatted = new Intl.NumberFormat('en-EN').format(offer.toFixed(2));
+      this.setState({ offer:formatted })
     }
   }
 
