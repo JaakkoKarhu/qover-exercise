@@ -1,12 +1,16 @@
 'use strict'
 
 let express = require('express'),
+    cookieParser = require('cookie-parser'),
+    cookieSession = require('cookie-session'),
     mongoose = require('mongoose'),
     nodemailer = require('nodemailer'),
     bodyParser = require('body-parser'),
     Quote = require('./model/quotes'),
     app = express(),
     router = express.Router(),
+    passport = require('passport'),
+    Strategy = require('passport-local').Strategy,
     port = process.env.API_PORT || 3001
 
 let transporter = nodemailer.createTransport({
@@ -15,10 +19,87 @@ let transporter = nodemailer.createTransport({
   path: '/usr/sbin/sendmail'
 })
 
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+const users = [
+  {
+    username: 'jaakko.st.karhu@gmail.com',
+    password: 'guest',
+    id: 1
+  },
+  {
+    username: 'contact@qover.me',
+    password: 'guest',
+    id: 2
+  }
+]
+
+const authUser = (username, password) => {
+  // Very naive
+  let auth = {}
+  users.map(function(o) {
+    console.log('user', username)
+    if (o.username===username) {
+      if (o.password===password) {
+        auth.user =  {
+          username: o.username,
+          id: o.id
+        }
+      } else {
+        auth.fail = 'Wrong password.'
+      }
+    }
+  })
+  if (!auth.user) {
+    auth.fail = 'User not found.'
+  }
+  return auth
+}
+
+const getUsernameById = (id) => {
+  let username
+  users.map((o) => {
+    if (o.id === id) {
+      username = o.username
+    }
+  })
+  return username
+}
+
+passport.use(new Strategy(
+  function(username, password, cb) {
+    let auth = authUser(username, password)
+    if (auth.fail) {
+      return cb(auth.fail, null)
+    } else {
+      return cb(null, auth.user)
+    }
+  }
+))
+
+// no idea about this, but following the docs
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user.id);
+});
+
+passport.deserializeUser(function(id, cb) {
+  let username = getUsernameById(id)
+  if (!username) {
+    return cb('Username not found', null)
+  } else {
+    return cb(null, username)
+  }
+});
 
 mongoose.connect('mongodb://localhost/qover-exercise')
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(cookieParser())
+app.use(cookieSession({
+  name: 'qover-exercise-session',
+  maxAge: 24 * 60 * 60 * 1000,
+  secret: 'very_secret'
+}))
 
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -35,8 +116,13 @@ app.use(function(req, res, next) {
   next()
 })
 router.get('/', function(req, res) {
-  res.json({ message: 'API INITIALIZED!'})
+  console.log('req', req.locals)
+  res.json({ message: 'API INITIALIZED! User: ' + req.user })
 })
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 // Ugly block
 router.route('/quotes')
   .get(function(req, res) {
@@ -85,7 +171,20 @@ router.route('/emailer')
     })
   })
 
+router.route('/login')
+  .get(function(req, res) {
+    res.json({ message: 'login fail' })
+  })
+  .post(
+    passport.authenticate('local', { failureRedirect: '/api/login'}),
+    function(req, res) {
+      //res.redirect('/')
+      res.json({ message: 'login success' })
+    }
+  )
+
 app.use('/api', router)
+
 app.listen(port, function() {
   console.log(`api running on port ${port}`)
 })
