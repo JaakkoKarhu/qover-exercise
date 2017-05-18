@@ -36,7 +36,6 @@ const authUser = (username, password) => {
   // Very naive
   let auth = {}
   users.map(function(o) {
-    console.log('user', username)
     if (o.username===username) {
       if (o.password===password) {
         auth.user =  {
@@ -67,11 +66,7 @@ const getUsernameById = (id) => {
 passport.use(new Strategy(
   function(username, password, cb) {
     let auth = authUser(username, password)
-    if (auth.fail) {
-      return cb(auth.fail, null)
-    } else {
       return cb(null, auth.user)
-    }
   }
 ))
 
@@ -116,7 +111,6 @@ app.use(function(req, res, next) {
   next()
 })
 router.get('/', function(req, res) {
-  console.log('req', req.locals)
   res.json({ message: 'API INITIALIZED! User: ' + req.user })
 })
 
@@ -174,14 +168,25 @@ router.route('/emailer')
 
 router.route('/login')
   .get(function(req, res) {
-    res.json({ message: 'login fail' })
+    res.json({ login: { status: 'fail' }})
   })
   .post(
-    passport.authenticate('local', { failureRedirect: '/api/login'}),
+    passport.authenticate('local', { failureRedirect: '/api/login' }),
     function(req, res) {
-      res.json({ message: 'login success' })
+      res.json({
+        login: {
+          status: 'success',
+          user: req.user
+        }
+      })
     }
   )
+
+router.route('/logout')
+  .get(function(req, res) {
+    req.logout()
+    res.json({ message: 'Logged out' })
+  })
 
 router.route('/user')
   .get(function(req, res) {

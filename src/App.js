@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { Component } from 'react'
 import Login from './components/Login'
 import OfferCounter from './components/OfferCounter'
+import Topbar from './components/Topbar'
 import './App.css'
 import {
   BrowserRouter as Router,
@@ -32,12 +33,18 @@ class App extends Component {
     this.setState({ user })
   }
 
+  logout = () => {
+    this.setState({ user: null })
+  }
+
   render() {
     const { initialized, user } = this.state
     if (initialized) {
       return (
         <Router>
           <div className="App">
+            <Topbar user={ user }
+                    logout={ this.logout } />
             <Route exact path="/"
                    component={
                     () => <OfferCounter user={ user } />

@@ -1,4 +1,7 @@
+import axios from 'axios'
+import Alert from 'react-bootstrap/lib/Alert'
 import Button from 'react-bootstrap/lib/Button'
+import Clearfix from 'react-bootstrap/lib/Clearfix'
 import Grid from 'react-bootstrap/lib/Grid'
 import Col from 'react-bootstrap/lib/Col'
 import FormGroup from 'react-bootstrap/lib/FormGroup'
@@ -11,14 +14,31 @@ class Login extends React.Component {
     super(props)
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      loginError: false
     }
   }
   handleSubmit = () => {
-    console.log('Login.js', '-->>', this.state.username, this.state.password);
+    const { username, password } = this.state,
+          body = { username, password }
+    axios.post('http://localhost:3001/api/login', body)
+      .then((response) => {
+        const { status, user } = response.data.login
+        const { login } = this.props
+        if (status==='fail') {
+          this.setState({ loginError: true })
+        } else if (status==='success') {
+          login(user)
+        }
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
   }
+
   render() {
-    const { user } = this.props
+    const { user } = this.props,
+          { loginError } = this.state
     if (user) {
       return <Redirect to="/" />
     } else {
@@ -27,20 +47,27 @@ class Login extends React.Component {
           <Col className="center-block"
                style={ { float: 'none' }}
                sm={ 7 }>
-            <FormGroup>
+            <FormGroup className={ loginError ? 'has-error' : '' }>
               <FormControl placeholder="Enter your username..."
-                           onChange={ (e) => this.setState({ username: e.target.value }) }>
+                           onChange={ (e) => this.setState({ username: e.target.value, loginError: false }) }>
               </FormControl>
             </FormGroup>
-            <FormGroup>
+            <FormGroup className={ loginError ? 'has-error' : '' }>
               <FormControl placeholder="...and your password." 
-                           onChange={ (e) => this.setState({ password: e.target.value })}/>
+                           onChange={ (e) => this.setState({ password: e.target.value, loginError: false })}
+                           type="password" />
             </FormGroup>
             <Button bsStyle="primary"
                     className="pull-right"
                     onClick={ this.handleSubmit }>
               Login
             </Button>
+            <Clearfix />
+            {
+              loginError
+              ? <Alert bsStyle='danger'>Wrong username or password</Alert> 
+              : null
+            }
           </Col>
         </Grid>
       )
