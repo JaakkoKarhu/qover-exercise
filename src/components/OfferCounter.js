@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
-import Alert from 'react-bootstrap/lib/Alert';
-import axios from 'axios';
-import Button from 'react-bootstrap/lib/Button';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Col from 'react-bootstrap/lib/Col';
-import Clearfix from 'react-bootstrap/lib/Clearfix';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import Grid from 'react-bootstrap/lib/Grid';
-import Select from 'react-select';
-import Row from 'react-bootstrap/lib/Row';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'react-select/dist/react-select.css';
+import React, { Component } from 'react'
+import Alert from 'react-bootstrap/lib/Alert'
+import axios from 'axios'
+import Button from 'react-bootstrap/lib/Button'
+import ControlLabel from 'react-bootstrap/lib/ControlLabel'
+import Col from 'react-bootstrap/lib/Col'
+import Clearfix from 'react-bootstrap/lib/Clearfix'
+import FormControl from 'react-bootstrap/lib/FormControl'
+import FormGroup from 'react-bootstrap/lib/FormGroup'
+import Grid from 'react-bootstrap/lib/Grid'
+import Select from 'react-select'
+import { Redirect } from 'react-router-dom'
+import Row from 'react-bootstrap/lib/Row'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'react-select/dist/react-select.css'
 
 const carOptions = [
   // Double check these values
@@ -74,9 +75,6 @@ class OfferCounter extends Component {
     axios.post('http://localhost:3001/api/quotes', body)
       .catch((error) => {
         console.log('Error:', error)
-      }) 
-      .then((lol) => {
-        console.log(lol)
       })
   }
 
@@ -115,7 +113,7 @@ class OfferCounter extends Component {
                 onClick={ this.handleSubmit }>
           Buy the insurance!
         </Button>
-      ),
+      )
       legend = (
           <p>Get insured with <b>{ offer }€</b></p>
       )
@@ -175,43 +173,48 @@ class OfferCounter extends Component {
   }
 
   render() {
-    const { brand, carPrice } = this.state.inputs
-    return (
-      <Grid>
-        <Col className="center-block"
-             style={ { float: 'none' }}
-             sm={ 7 }>
-          <FormGroup>
-            <ControlLabel>
-              Name of the driver
-            </ControlLabel>
-            <FormControl placeholder="First name, last name"
-                         onChange={ (e) => this.handleNameChange(e.target.value) } />
-          </FormGroup>
-          <FormGroup className={ brand.reject ? 'has-error' : '' }>
-            <ControlLabel>
-              Car brand
-            </ControlLabel>
-            <Select value={ brand.value }
-                    clearable={ false }
-                    options={ carOptions }
-                    onChange={ this.handleBrandChange }>
-            </Select>
-          </FormGroup>
-          <FormGroup className={ carPrice.reject ? 'has-error' : '' }>
-            <ControlLabel>
-              Price at the time of purchase (including VAT)
-            </ControlLabel>
-            <FormControl placeholder="5.000-75.000€"
-                         value={ carPrice.value }
-                         onChange={ (e) => this.handlePriceChange(e.target.value) } />
-          </FormGroup>
-          { this.getFormFooter() }
-          <Clearfix />
-          { this.getErrorMessages() }
-        </Col>
-      </Grid>
-    );
+    const { brand, carPrice } = this.state.inputs,
+          { user } = this.props
+    if ( !user ) {
+      return <Redirect to="/login" />
+    } else {
+      return (
+        <Grid>
+          <Col className="center-block"
+               style={ { float: 'none' }}
+               sm={ 7 }>
+            <FormGroup>
+              <ControlLabel>
+                Name of the driver
+              </ControlLabel>
+              <FormControl placeholder="First name, last name"
+                           onChange={ (e) => this.handleNameChange(e.target.value) } />
+            </FormGroup>
+            <FormGroup className={ brand.reject ? 'has-error' : '' }>
+              <ControlLabel>
+                Car brand
+              </ControlLabel>
+              <Select value={ brand.value }
+                      clearable={ false }
+                      options={ carOptions }
+                      onChange={ this.handleBrandChange }>
+              </Select>
+            </FormGroup>
+            <FormGroup className={ carPrice.reject ? 'has-error' : '' }>
+              <ControlLabel>
+                Price at the time of purchase (including VAT)
+              </ControlLabel>
+              <FormControl placeholder="5.000-75.000€"
+                           value={ carPrice.value }
+                           onChange={ (e) => this.handlePriceChange(e.target.value) } />
+            </FormGroup>
+            { this.getFormFooter() }
+            <Clearfix />
+            { this.getErrorMessages() }
+          </Col>
+        </Grid>
+      );
+    }
   }
 };
 

@@ -153,6 +153,7 @@ router.route('/quotes')
     })
   })
 
+/* FIX EMAILER */
 router.route('/emailer')
   .post(function(req, res) {
     transporter.sendMail({
@@ -178,14 +179,13 @@ router.route('/login')
   .post(
     passport.authenticate('local', { failureRedirect: '/api/login'}),
     function(req, res) {
-      //res.redirect('/')
       res.json({ message: 'login success' })
     }
   )
 
 router.route('/user')
   .get(function(req, res) {
-    res.json({ user: req.user })
+    res.json({ user: req.user || null })
   })
 
 app.use('/api', router)
