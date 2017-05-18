@@ -1,7 +1,9 @@
 import axios from 'axios'
-import React, { Component } from 'react'
+import Col from 'react-bootstrap/lib/Col'
+import Grid from 'react-bootstrap/lib/Grid'
 import Login from './components/Login'
 import OfferCounter from './components/OfferCounter'
+import React, { Component } from 'react'
 import Topbar from './components/Topbar'
 import './App.css'
 import {
@@ -45,14 +47,22 @@ class App extends Component {
           <div className="App">
             <Topbar user={ user }
                     logout={ this.logout } />
-            <Route exact path="/"
-                   component={
-                    () => <OfferCounter user={ user } />
-                   } />
-            <Route path="/login"
-                   component={
-                    () => <Login user={ user } login={ this.login } />
-                   } />
+            <Grid>
+              <Col className="center-block"
+                 style={ { float: 'none' }}
+                 lg={ 5 }
+                 md={ 6 }
+                 sm={ 7 }>
+              <Route exact path="/"
+                     component={
+                      () => <OfferCounter user={ user } />
+                     } />
+              <Route path="/login"
+                     component={
+                      () => <Login user={ user } login={ this.login } />
+                     } />
+              </Col>
+            </Grid>
           </div>
         </Router>
       );

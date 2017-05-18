@@ -1,3 +1,132 @@
-.has-error .Select-control {
-  border: solid thin #a94442;
+/*
+ *
+ * Error red: #F4566A;
+ * Blue shades: #2066c2, #0C74C6
+ * Mid blue: #1B7FD3
+ * Turqoise shades: #31cfda, #20b9c3;
+ * Gradient blue: radial-gradient(circle at -6% -9%, #317bda, #3ba5d3);
+ * Gradient green: linear-gradient(344deg, #31cfda, #b9f4bc);
+ * Gray shades: #f5f7f9, #ccc;
+ */
+
+body {
+	background: transparent;
+	font-weight: 300;
+}
+
+h1 {
+	font-weight: 300;
+	line-height: 1;
+}
+
+/* Typo in classname */
+h1 .highlight {
+	font-weight: 500;
+	color: #31cfda;
+	border-bottom: solid 5px #31cfda;
+}
+
+label {
+	font-weight: 300;
+	color: #20b9c3;
+}
+
+.offer-section {
+	text-align: right;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 15px;
+}
+.offer-section h1 {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.offer-section h1.success {
+	text-align: center;
+	color: #4cae4c;
+}
+
+.form-control,
+.Select-control,
+.Select-input {
+	height: 46px;
+}
+
+.Select-placeholder,
+.Select--single > .Select-control .Select-value  {
+	line-height: 46px;
+}
+
+.alert.alert-danger {
+	color: #F4566A;
+	border: solid 1px #F4566A;
+	background-color: rgba(244, 86, 106, 0.09);
+	margin-top: 15px;
+}
+
+.btn {
+	height: 46px;
+	padding-left: 30px;
+	padding-right: 30px;
+	font-weight: 400;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	font-size: 14px;
+}
+
+.btn-outline,
+.btn-outline:hover,
+.btn-outline:active:hover,
+.btn-outline:focus{
+	background: transparent;
+	box-shadow: none;
+	border: solid thin white;
+	color: white;	
+}
+
+.btn-outline:active:hover,
+.btn-outline:hover {
+	background: white;
+	color: #2066c2;
+}
+
+.btn-sm {
+	height: 30px;
+	padding-left: 15px;
+	padding-right: 15px;
+	font-size: 11px;
+}
+
+.btn.full-width {
+	width: 100%;
+}
+
+.center-block {
+	background: white;
+	border: solid thin #ccc;
+	padding-bottom: 40px;
+	padding-top: 40px;
+	border-radius: 10px;
+	margin-top: 100px;
+}
+
+.has-error .Select-control,
+.has-error .form-control {
+  border: solid thin #F4566A;
+}
+
+.has-error .control-label {
+	color: #F4566A;
+}
+
+.navbar-default {
+	background-color: #1B7FD3;
+	padding-top: 15px;
+	height: 60px;
+	position: absolute;
+	width: 100%;
+	border: none;
+	border-radius: 0;
+	border-bottom: solid 4px #2066c2;
 }

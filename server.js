@@ -147,7 +147,6 @@ router.route('/quotes')
     })
   })
 
-/* FIX EMAILER */
 router.route('/emailer')
   .post(function(req, res) {
     const { driverName, brand, carPrice, rejected, offer } = req.body,
@@ -168,7 +167,6 @@ QOVER`
       subject,
       text
     }, (err, info) => {
-      // Don't return errors IRL
       if (err) {
         res.json({ Error: err })
       } else {

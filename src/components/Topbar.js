@@ -24,8 +24,7 @@ class TopBar extends React.Component {
     if (user) {
       return (
         <Navbar>
-          <Button className="pull-right"
-                  bsStyle="primary"
+          <Button className="pull-right btn-sm btn-outline"
                   onClick={ this.logoutHandler }>
             Logout
           </Button>
