@@ -1,6 +1,8 @@
 'use strict'
 
 let express = require('express'),
+    cookieParser = require('cookie-parser'),
+    cookieSession = require('cookie-session'),
     mongoose = require('mongoose'),
     nodemailer = require('nodemailer'),
     bodyParser = require('body-parser'),
@@ -52,11 +54,24 @@ const authUser = (username, password) => {
   return auth
 }
 
+const getUsernameById = (id) => {
+  let username
+  users.map((o) => {
+    if (o.id === id) {
+      username = o.username
+    }
+  })
+  return username
+}
+
 passport.use(new Strategy(
   function(username, password, cb) {
     let auth = authUser(username, password)
-    if (auth.fail) { return cb(auth.fail, null) }
-    return cb(null, auth.user)
+    if (auth.fail) {
+      return cb(auth.fail, null)
+    } else {
+      return cb(null, auth.user)
+    }
   }
 ))
 
@@ -66,10 +81,25 @@ passport.serializeUser(function(user, cb) {
   cb(null, user.id);
 });
 
+passport.deserializeUser(function(id, cb) {
+  let username = getUsernameById(id)
+  if (!username) {
+    return cb('Username not found', null)
+  } else {
+    return cb(null, username)
+  }
+});
+
 mongoose.connect('mongodb://localhost/qover-exercise')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(cookieParser())
+app.use(cookieSession({
+  name: 'qover-exercise-session',
+  maxAge: 24 * 60 * 60 * 1000,
+  secret: 'very_secret'
+}))
 
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -86,7 +116,8 @@ app.use(function(req, res, next) {
   next()
 })
 router.get('/', function(req, res) {
-  res.json({ message: 'API INITIALIZED!'})
+  console.log('req', req.locals)
+  res.json({ message: 'API INITIALIZED! User: ' + req.user })
 })
 
 app.use(passport.initialize())
