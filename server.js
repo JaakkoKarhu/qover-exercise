@@ -1,14 +1,20 @@
 'use strict'
 
-var express = require('express')
-var mongoose = require('mongoose')
-var bodyParser = require('body-parser')
-var Quote = require('./model/quotes')
+let express = require('express'),
+    mongoose = require('mongoose'),
+    nodemailer = require('nodemailer'),
+    bodyParser = require('body-parser'),
+    Quote = require('./model/quotes'),
+    app = express(),
+    router = express.Router(),
+    port = process.env.API_PORT || 3001
 
-var app = express()
-var router = express.Router()
+let transporter = nodemailer.createTransport({
+  sendmail: true,
+  newline: 'unix',
+  path: '/usr/sbin/sendmail'
+})
 
-var port = process.env.API_PORT || 3001
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
@@ -31,7 +37,7 @@ app.use(function(req, res, next) {
 router.get('/', function(req, res) {
   res.json({ message: 'API INITIALIZED!'})
 })
-
+// Ugly block
 router.route('/quotes')
   .get(function(req, res) {
     Quote.find(function(err, quotes) {
@@ -43,7 +49,7 @@ router.route('/quotes')
     })
   })
   .post(function(req, res) {
-    var quote = new Quote(),
+    let quote = new Quote(),
         { userName, brand, carPrice, rejected, offer } = req.body,
         date = Date.now()
     quote.userName = userName || null
@@ -57,6 +63,24 @@ router.route('/quotes')
         res.json(err)
       } else {
         res.json({ message: 'Quote added succesfully' })
+      }
+    })
+  })
+
+router.route('/emailer')
+  .post(function(req, res) {
+    transporter.sendMail({
+      from: 'jaakko.exercise@qover.com',
+      to: 'jaakko.st.karhu@gmail.com',
+      subject: 'Testing',
+      text: 'Success, if you see this'
+    }, (err, info) => {
+      // Don't return errors IRL
+      if (err) {
+        res.json({ Error: err })
+      } else {
+        const { envelope, messageId } = info
+        res.json({ envelope, messageId })
       }
     })
   })
