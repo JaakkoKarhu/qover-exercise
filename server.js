@@ -183,6 +183,11 @@ router.route('/login')
     }
   )
 
+router.route('/user')
+  .get(function(req, res) {
+    res.json({ user: req.user })
+  })
+
 app.use('/api', router)
 
 app.listen(port, function() {
