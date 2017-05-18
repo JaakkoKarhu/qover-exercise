@@ -63,7 +63,7 @@ class OfferCounter extends Component {
           offer = new Intl.NumberFormat('en-EN').format(unformatted.toFixed(2)),
           rejected = this.getErrorMessages()!=null,
           body = {
-            userName: name.value,
+            driverName: name.value,
             brand: brand.value.value,
             carPrice: carPrice.value,
             rejected,
@@ -102,7 +102,7 @@ class OfferCounter extends Component {
       button =  (
         <Button bsStyle="success"
                 className="pull-right"
-                onClick={ this.handleSubmit }>
+                onClick={ this.handleGetPriceClick }>
           Get price!
         </Button>
       )
@@ -110,7 +110,7 @@ class OfferCounter extends Component {
       button = (
         <Button bsStyle="primary"
                 className="pull-right"
-                onClick={ this.handleSubmit }>
+                onClick={ this.handleBuyClick }>
           Buy the insurance!
         </Button>
       )
@@ -158,7 +158,7 @@ class OfferCounter extends Component {
     this.setState({ inputs, offer: '' })
   }
 
-  handleSubmit = () => {
+  handleGetPriceClick = () => {
     const { brand, carPrice } = this.state.inputs
     let inputs = { ...this.state.inputs }
     if (!brand.value) {
@@ -170,6 +170,26 @@ class OfferCounter extends Component {
       inputs.carPrice.reject = rejectReasons.carPriceRange
     }
     this.setState({ inputs }, this.countPrice)
+  }
+
+  handleBuyClick = () => {
+    const { brand, carPrice, name } = this.state.inputs,
+          { user } = this.props,
+          // Ok nested structure gets a bit confusing here
+          unformatted = brand.value.insurance + ((brand.value.percentage/100) * carPrice.value),
+          offer = new Intl.NumberFormat('en-EN').format(unformatted.toFixed(2)),
+          rejected = this.getErrorMessages()!=null,
+          body = {
+            driverName: name.value,
+            brand: brand.value.value,
+            email: user,
+            carPrice: carPrice.value,
+            offer: isNaN(offer) ? '' : offer
+          }
+    axios.post('http://localhost:3001/api/emailer', body)
+      .catch((error) => {
+        console.log('Error:', error)
+    })
   }
 
   render() {

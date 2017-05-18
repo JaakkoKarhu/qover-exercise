@@ -130,9 +130,9 @@ router.route('/quotes')
   })
   .post(function(req, res) {
     let quote = new Quote(),
-        { userName, brand, carPrice, rejected, offer } = req.body,
+        { driverName, brand, carPrice, rejected, offer } = req.body,
         date = Date.now()
-    quote.userName = userName || null
+    quote.driverName = driverName || null
     quote.brand = brand || null
     quote.carPrice = carPrice || null
     quote.rejected = rejected
@@ -150,11 +150,23 @@ router.route('/quotes')
 /* FIX EMAILER */
 router.route('/emailer')
   .post(function(req, res) {
+    const { driverName, brand, carPrice, rejected, offer } = req.body,
+          subject = `Insurance for your ${ brand }`
+    const text =
+`${ driverName ? 'Dear ' + driverName : 'Hello there' },
+
+we confirm that you have bough an insurance contract for your ${ brand }, which value is ${ carPrice }
+
+The price to be paid is ${ offer }.
+
+Best regards,
+
+QOVER`
     transporter.sendMail({
       from: 'jaakko.exercise@qover.com',
       to: 'jaakko.st.karhu@gmail.com',
-      subject: 'Testing',
-      text: 'Success, if you see this'
+      subject,
+      text
     }, (err, info) => {
       // Don't return errors IRL
       if (err) {

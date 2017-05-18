@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
 var QuoteSchema = new Schema({
-  userName: String,
+  driverName: String,
   date: String,
   brand: String,
   carPrice: Number,
