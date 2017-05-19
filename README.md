@@ -35,8 +35,12 @@ Of course, in real life I would not do this kind of a change without disussing a
 
 Built the page on top of Bootstrap, grabbed some Qover flavour from your website...
 
+### Building
+
+I haven't checked the build process and the possible issues there. This would, of course, be something I would do in real life.
+
 ## Acknoledgements
 
-When building the backend relied heavily on this article:
+When building the backend, I relied heavily on this article:
 
 [React Getting Started — The MERN Stack Tutorial!](https://medium.com/@bryantheastronaut/react-getting-started-the-mern-stack-tutorial-feat-es6-de1a2886be50)
