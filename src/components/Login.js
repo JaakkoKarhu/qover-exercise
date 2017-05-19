@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/lib/Button'
 import Clearfix from 'react-bootstrap/lib/Clearfix'
 import FormGroup from 'react-bootstrap/lib/FormGroup'
 import FormControl from 'react-bootstrap/lib/FormControl'
+import Form from 'react-bootstrap/lib/Form'
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 
@@ -16,7 +17,9 @@ class Login extends React.Component {
       loginError: false
     }
   }
-  handleSubmit = () => {
+
+  handleSubmit = (e) => {
+    e.preventDefault()
     const { username, password } = this.state,
           body = { username, password }
     axios.post('http://localhost:3001/api/login', body)
@@ -42,27 +45,29 @@ class Login extends React.Component {
     } else {
       return (
         <section>
+         <form onSubmit={this.handleSubmit}>
           <FormGroup className={ loginError ? 'has-error' : '' }>
             <FormControl placeholder='Enter your username...'
                          onChange={ (e) => this.setState({ username: e.target.value, loginError: false }) }>
             </FormControl>
-          </FormGroup>
-          <FormGroup className={ loginError ? 'has-error' : '' }>
-            <FormControl placeholder='...and your password.' 
-                         onChange={ (e) => this.setState({ password: e.target.value, loginError: false })}
-                         type='password' />
-          </FormGroup>
-          <Button bsStyle='primary'
-                  className='pull-right full-width'
-                  onClick={ this.handleSubmit }>
-            Login
-          </Button>
-          <Clearfix />
-          {
-            loginError
-            ? <Alert bsStyle='danger'>Wrong username or password</Alert> 
-            : null
-          }
+            </FormGroup>
+            <FormGroup className={ loginError ? 'has-error' : '' }>
+              <FormControl placeholder='...and your password.' 
+                           onChange={ (e) => this.setState({ password: e.target.value, loginError: false })}
+                           type='password' />
+            </FormGroup>
+            <Button bsStyle='primary'
+                    type='submit'
+                    className='pull-right full-width'>
+              Login
+            </Button>
+            <Clearfix />
+            {
+              loginError
+              ? <Alert bsStyle='danger'>Wrong username or password</Alert> 
+              : null
+            }
+          </form>
         </section>
       )
     }
@@ -70,3 +75,7 @@ class Login extends React.Component {
 }
 
 export default Login;
+
+
+
+
