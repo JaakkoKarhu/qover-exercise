@@ -14,7 +14,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'react-select/dist/react-select.css'
 
 const carOptions = [
-  // Double check these values
   {
     value: 'audi',
     label: 'Audi',
@@ -58,7 +57,7 @@ class OfferCounter extends Component {
 
   countPrice = () => {
     const { brand, carPrice, name } = this.state.inputs,
-          // Ok nested structure gets a bit confusing here
+          // Ok, nested structure gets a bit confusing here
           unformatted = brand.value.insurance + ((brand.value.percentage/100) * carPrice.value),
           offer = new Intl.NumberFormat('en-EN').format(unformatted.toFixed(2)),
           rejected = this.getErrorMessages()!=null,
@@ -102,6 +101,7 @@ class OfferCounter extends Component {
       legend = null
       button =  (
         <Button bsStyle='primary'
+                type='submit'
                 className='pull-right full-width'
                 onClick={ this.handleGetPriceClick }>
           Get price!
@@ -111,6 +111,7 @@ class OfferCounter extends Component {
       legend = <h1>Our offer: <span className='highlight'>{offer}€</span></h1>
       button = (
         <Button bsStyle='success'
+                type='submit'
                 className='pull-right full-width'
                 onClick={ this.handleBuyClick }>
           Buy the insurance!
@@ -196,6 +197,19 @@ class OfferCounter extends Component {
     })
   }
 
+  handleSubmit = (e) => {
+    /* This could be better organised with the
+     * click events, but this is a last minute addition
+     */
+    e.preventDefault()
+    const { ordered, offer } = this.state
+    if (!ordered) {
+      this.handleGetPriceClick()
+    } else if (offer&&!ordered) {
+      this.handleBuyClick()
+    }
+  }
+
   render() {
     const { brand, carPrice } = this.state.inputs,
           { user } = this.props
@@ -204,34 +218,36 @@ class OfferCounter extends Component {
     } else {
       return (
         <section>
-          <FormGroup>
-            <ControlLabel>
-              Name of the driver
-            </ControlLabel>
-            <FormControl placeholder='First name, last name'
-                         onChange={ (e) => this.handleNameChange(e.target.value) } />
-          </FormGroup>
-          <FormGroup className={ brand.reject ? 'has-error' : '' }>
-            <ControlLabel>
-              Car brand
-            </ControlLabel>
-            <Select value={ brand.value }
-                    clearable={ false }
-                    options={ carOptions }
-                    onChange={ this.handleBrandChange }>
-            </Select>
-          </FormGroup>
-          <FormGroup className={ carPrice.reject ? 'has-error' : '' }>
-            <ControlLabel>
-              Price at the time of purchase (including VAT)
-            </ControlLabel>
-            <FormControl placeholder='5.000-75.000€'
-                         value={ carPrice.value }
-                         onChange={ (e) => this.handlePriceChange(e.target.value) } />
-          </FormGroup>
-          { this.getFormFooter() }
-          <Clearfix />
-          { this.getErrorMessages() }
+          <form onSubmit={ this.handleSubmit }>
+            <FormGroup>
+              <ControlLabel>
+                Name of the driver
+              </ControlLabel>
+              <FormControl placeholder='First name, last name'
+                           onChange={ (e) => this.handleNameChange(e.target.value) } />
+            </FormGroup>
+            <FormGroup className={ brand.reject ? 'has-error' : '' }>
+              <ControlLabel>
+                Car brand
+              </ControlLabel>
+              <Select value={ brand.value }
+                      clearable={ false }
+                      options={ carOptions }
+                      onChange={ this.handleBrandChange }>
+              </Select>
+            </FormGroup>
+            <FormGroup className={ carPrice.reject ? 'has-error' : '' }>
+              <ControlLabel>
+                Price at the time of purchase (including VAT)
+              </ControlLabel>
+              <FormControl placeholder='5.000-75.000€'
+                           value={ carPrice.value }
+                           onChange={ (e) => this.handlePriceChange(e.target.value) } />
+            </FormGroup>
+            { this.getFormFooter() }
+            <Clearfix />
+            { this.getErrorMessages() }
+          </form>
         </section>
       );
     }
