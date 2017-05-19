@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Button from 'react-bootstrap/lib/Button'
 import Navbar from 'react-bootstrap/lib/Navbar'
-import React from 'react';
+import React from 'react'
 
 class TopBar extends React.Component {
   constructor(props) {
@@ -15,7 +15,7 @@ class TopBar extends React.Component {
         logout()
       })
       .catch((error) => {
-        console.log('Error:', error)
+        //
       })
   }
 
@@ -24,16 +24,16 @@ class TopBar extends React.Component {
     if (user) {
       return (
         <Navbar>
-          <Button className="pull-right btn-sm btn-outline"
+          <Button className='pull-right btn-sm btn-outline'
                   onClick={ this.logoutHandler }>
             Logout
           </Button>
         </Navbar>
-      );
+      )
     } else {
       return null
     }
   }
-};
+}
 
-export default TopBar;
+export default TopBar

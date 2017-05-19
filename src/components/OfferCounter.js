@@ -1,4 +1,3 @@
-import React, { Component } from 'react'
 import Alert from 'react-bootstrap/lib/Alert'
 import axios from 'axios'
 import Button from 'react-bootstrap/lib/Button'
@@ -7,8 +6,9 @@ import Col from 'react-bootstrap/lib/Col'
 import Clearfix from 'react-bootstrap/lib/Clearfix'
 import FormControl from 'react-bootstrap/lib/FormControl'
 import FormGroup from 'react-bootstrap/lib/FormGroup'
-import Select from 'react-select'
+import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
+import Select from 'react-select'
 import Row from 'react-bootstrap/lib/Row'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'react-select/dist/react-select.css'
@@ -31,7 +31,7 @@ const carOptions = [
     label: 'Porsche',
     insurance: 500,
     percentage: 0.7
-  },
+  }
 ]
 
 const rejectReasons = {
@@ -74,17 +74,17 @@ class OfferCounter extends Component {
     }
     axios.post('http://localhost:3001/api/quotes', body)
       .catch((error) => {
-        console.log('Error:', error)
+        //
       })
   }
 
   getErrorMessages = () => {
-    const { inputs } = this.state
-    let messages = []
+    const { inputs } = this.state,
+          messages = []
     Object.keys(inputs).forEach((key) => {
-      const reject = inputs[key].reject
+      const { reject } = inputs[key]
       if (reject) {
-        let elem = <p key={ key }>{reject}</p>
+        const elem = <p key={ key }>{reject}</p>
         messages.push(elem)
       }
     })
@@ -101,33 +101,33 @@ class OfferCounter extends Component {
     if (!offer) {
       legend = null
       button =  (
-        <Button bsStyle="primary"
-                className="pull-right full-width"
+        <Button bsStyle='primary'
+                className='pull-right full-width'
                 onClick={ this.handleGetPriceClick }>
           Get price!
         </Button>
       )
     } else if (offer&&!ordered) {
-      legend = <h1>Our offer: <span className="highlight">{offer}€</span></h1>
+      legend = <h1>Our offer: <span className='highlight'>{offer}€</span></h1>
       button = (
-        <Button bsStyle="success"
-                className="pull-right full-width"
+        <Button bsStyle='success'
+                className='pull-right full-width'
                 onClick={ this.handleBuyClick }>
           Buy the insurance!
         </Button>
       )
     } else if (ordered) {
-      legend = <h1 className="success">We have received your order!</h1>
+      legend = <h1 className='success'>We have received your order!</h1>
       button = null
     }
-    return ( 
+    return (
       <Row>
         <Col xs={ 12 }
-             className="offer-section">
+             className='offer-section'>
           { legend }
         </Col>
         <Col xs={ 12 }
-             className="pull-right">
+             className='pull-right'>
           { button }
         </Col>
       </Row>
@@ -151,13 +151,12 @@ class OfferCounter extends Component {
     if (isNaN(value)||(value.length===1&&value==='0')) {
       return
     } else if ((value.length===1&&value>7)||value>75000) {
-      let reject =  rejectReasons.carPriceRange
+      const reject = rejectReasons.carPriceRange
       inputs.carPrice = { value, reject }
     } else {
-      let reject = false;
+      const reject = false;
       inputs.carPrice = { value, reject }
     }
-    // Check if anything actually changed
     this.setState({ inputs, offer: '', ordered: false })
   }
 
@@ -181,11 +180,10 @@ class OfferCounter extends Component {
           // Ok nested structure gets a bit confusing here
           unformatted = brand.value.insurance + ((brand.value.percentage/100) * carPrice.value),
           offer = new Intl.NumberFormat('en-EN').format(unformatted.toFixed(2)),
-          rejected = this.getErrorMessages()!=null,
           body = {
             driverName: name.value,
             brand: brand.value.value,
-            email: user,
+            email: user.username,
             carPrice: carPrice.value,
             offer: isNaN(offer) ? '' : offer
           }
@@ -194,7 +192,7 @@ class OfferCounter extends Component {
         this.setState({ ordered: true })
       })
       .catch((error) => {
-        console.log('Error:', error)
+        //
     })
   }
 
@@ -202,7 +200,7 @@ class OfferCounter extends Component {
     const { brand, carPrice } = this.state.inputs,
           { user } = this.props
     if ( !user ) {
-      return <Redirect to="/login" />
+      return <Redirect to='/login' />
     } else {
       return (
         <section>
@@ -210,7 +208,7 @@ class OfferCounter extends Component {
             <ControlLabel>
               Name of the driver
             </ControlLabel>
-            <FormControl placeholder="First name, last name"
+            <FormControl placeholder='First name, last name'
                          onChange={ (e) => this.handleNameChange(e.target.value) } />
           </FormGroup>
           <FormGroup className={ brand.reject ? 'has-error' : '' }>
@@ -227,7 +225,7 @@ class OfferCounter extends Component {
             <ControlLabel>
               Price at the time of purchase (including VAT)
             </ControlLabel>
-            <FormControl placeholder="5.000-75.000€"
+            <FormControl placeholder='5.000-75.000€'
                          value={ carPrice.value }
                          onChange={ (e) => this.handlePriceChange(e.target.value) } />
           </FormGroup>

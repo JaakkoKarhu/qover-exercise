@@ -10,105 +10,104 @@
  */
 
 body {
-	background: transparent;
-	font-weight: 300;
+  background: transparent;
+  font-weight: 300;
 }
 
 h1 {
-	font-weight: 300;
-	line-height: 1;
+  font-weight: 300;
+  line-height: 1;
 }
 
-/* Typo in classname */
 h1 .highlight {
-	font-weight: 500;
-	color: #31cfda;
-	border-bottom: solid 5px #31cfda;
+  font-weight: 500;
+  color: #31cfda;
+  border-bottom: solid 5px #31cfda;
 }
 
 label {
-	font-weight: 300;
-	color: #20b9c3;
+  font-weight: 300;
+  color: #20b9c3;
 }
 
 .offer-section {
-	text-align: right;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	margin-bottom: 15px;
+  text-align: right;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
 }
 .offer-section h1 {
-	margin-top: 0px;
-	margin-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .offer-section h1.success {
-	text-align: center;
-	color: #4cae4c;
+  text-align: center;
+  color: #4cae4c;
 }
 
 .form-control,
 .Select-control,
 .Select-input {
-	height: 46px;
+  height: 46px;
 }
 
 .Select-placeholder,
 .Select--single > .Select-control .Select-value  {
-	line-height: 46px;
+  line-height: 46px;
 }
 
 .alert.alert-danger {
-	color: #F4566A;
-	border: solid 1px #F4566A;
-	background-color: rgba(244, 86, 106, 0.09);
-	margin-top: 15px;
+  color: #F4566A;
+  border: solid 1px #F4566A;
+  background-color: rgba(244, 86, 106, 0.09);
+  margin-top: 15px;
 }
 
 .btn {
-	height: 46px;
-	padding-left: 30px;
-	padding-right: 30px;
-	font-weight: 400;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
-	font-size: 14px;
+  height: 46px;
+  padding-left: 30px;
+  padding-right: 30px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 14px;
 }
 
 .btn-outline,
 .btn-outline:hover,
 .btn-outline:active:hover,
 .btn-outline:focus{
-	background: transparent;
-	box-shadow: none;
-	border: solid thin white;
-	color: white;	
+  background: transparent;
+  box-shadow: none;
+  border: solid thin white;
+  color: white; 
 }
 
 .btn-outline:active:hover,
 .btn-outline:hover {
-	background: white;
-	color: #2066c2;
+  background: white;
+  color: #2066c2;
 }
 
 .btn-sm {
-	height: 30px;
-	padding-left: 15px;
-	padding-right: 15px;
-	font-size: 11px;
+  height: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 11px;
 }
 
 .btn.full-width {
-	width: 100%;
+  width: 100%;
 }
 
 .center-block {
-	background: white;
-	border: solid thin #ccc;
-	padding-bottom: 40px;
-	padding-top: 40px;
-	border-radius: 10px;
-	margin-top: 100px;
+  background: white;
+  border: solid thin #ccc;
+  padding-bottom: 40px;
+  padding-top: 40px;
+  border-radius: 10px;
+  margin-top: 100px;
 }
 
 .has-error .Select-control,
@@ -117,16 +116,16 @@ label {
 }
 
 .has-error .control-label {
-	color: #F4566A;
+  color: #F4566A;
 }
 
 .navbar-default {
-	background-color: #1B7FD3;
-	padding-top: 15px;
-	height: 60px;
-	position: absolute;
-	width: 100%;
-	border: none;
-	border-radius: 0;
-	border-bottom: solid 4px #2066c2;
+  background-color: #1B7FD3;
+  padding-top: 15px;
+  height: 60px;
+  position: absolute;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  border-bottom: solid 4px #2066c2;
 }

@@ -1,23 +1,17 @@
 'use strict'
 
-let express = require('express'),
-    cookieParser = require('cookie-parser'),
-    cookieSession = require('cookie-session'),
-    mongoose = require('mongoose'),
-    nodemailer = require('nodemailer'),
-    bodyParser = require('body-parser'),
-    Quote = require('./model/quotes'),
-    app = express(),
-    router = express.Router(),
-    passport = require('passport'),
-    Strategy = require('passport-local').Strategy,
-    port = process.env.API_PORT || 3001
-
-let transporter = nodemailer.createTransport({
-  sendmail: true,
-  newline: 'unix',
-  path: '/usr/sbin/sendmail'
-})
+const express = require('express'),
+      cookieParser = require('cookie-parser'),
+      cookieSession = require('cookie-session'),
+      mongoose = require('mongoose'),
+      nodemailer = require('nodemailer'),
+      bodyParser = require('body-parser'),
+      Quote = require('./model/quotes'),
+      app = express(),
+      router = express.Router(),
+      passport = require('passport'),
+      { Strategy } = require('passport-local'),
+      port = process.env.API_PORT || 3001
 
 const users = [
   {
@@ -31,6 +25,12 @@ const users = [
     id: 2
   }
 ]
+
+let transporter = nodemailer.createTransport({
+  sendmail: true,
+  newline: 'unix',
+  path: '/usr/sbin/sendmail'
+})
 
 const authUser = (username, password) => {
   // Very naive
@@ -64,7 +64,7 @@ const getUsernameById = (id) => {
 }
 
 passport.use(new Strategy(
-  function(username, password, cb) {
+  (username, password, cb) => {
     let auth = authUser(username, password)
       return cb(null, auth.user)
   }
@@ -76,20 +76,21 @@ passport.serializeUser(function(user, cb) {
   cb(null, user.id);
 });
 
-passport.deserializeUser(function(id, cb) {
+passport.deserializeUser((id, cb) => {
   let username = getUsernameById(id)
   if (!username) {
     return cb('Username not found', null)
   } else {
     return cb(null, username)
   }
-});
+})
 
 mongoose.connect('mongodb://localhost/qover-exercise')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
+
 app.use(cookieSession({
   name: 'qover-exercise-session',
   maxAge: 24 * 60 * 60 * 1000,
@@ -111,47 +112,17 @@ app.use(function(req, res, next) {
   next()
 })
 router.get('/', function(req, res) {
-  res.json({ message: 'API INITIALIZED! User: ' + req.user })
+  res.json({ message: 'API INITIALIZED!' })
 })
 
 app.use(passport.initialize())
 app.use(passport.session())
 
-// Ugly block
-router.route('/quotes')
-  .get(function(req, res) {
-    Quote.find(function(err, quotes) {
-      if (err) {
-        res.json(err)
-      } else {
-        res.json(quotes)
-      }
-    })
-  })
-  .post(function(req, res) {
-    let quote = new Quote(),
-        { driverName, brand, carPrice, rejected, offer } = req.body,
-        date = Date.now()
-    quote.driverName = driverName || null
-    quote.brand = brand || null
-    quote.carPrice = carPrice || null
-    quote.rejected = rejected
-    quote.offer = offer || null
-    quote.date = date || null
-    quote.save(function(err) {
-      if (err) {
-        res.json(err)
-      } else {
-        res.json({ message: 'Quote added succesfully' })
-      }
-    })
-  })
-
 router.route('/emailer')
-  .post(function(req, res) {
-    const { driverName, brand, carPrice, rejected, offer } = req.body,
-          subject = `Insurance for your ${ brand }`
-    const text =
+  .post((req, res) => {
+    const { driverName, brand, carPrice, offer, email } = req.body,
+          subject = `Insurance for your ${ brand }`,
+          text =
 `${ driverName ? 'Dear ' + driverName : 'Hello there' },
 
 we confirm that you have bough an insurance contract for your ${ brand }, which value is ${ carPrice }
@@ -163,7 +134,7 @@ Best regards,
 QOVER`
     transporter.sendMail({
       from: 'jaakko.exercise@qover.com',
-      to: 'jaakko.st.karhu@gmail.com',
+      to: email,
       subject,
       text
     }, (err, info) => {
@@ -177,12 +148,12 @@ QOVER`
   })
 
 router.route('/login')
-  .get(function(req, res) {
+  .get((req, res) => {
     res.json({ login: { status: 'fail' }})
   })
   .post(
     passport.authenticate('local', { failureRedirect: '/api/login' }),
-    function(req, res) {
+    (req, res) => {
       res.json({
         login: {
           status: 'success',
@@ -193,18 +164,49 @@ router.route('/login')
   )
 
 router.route('/logout')
-  .get(function(req, res) {
+  .get((req, res) => {
     req.logout()
     res.json({ message: 'Logged out' })
   })
 
 router.route('/user')
-  .get(function(req, res) {
+  .get((req, res) => {
     res.json({ user: req.user || null })
+  })
+
+  router.route('/quotes')
+  .get(function(req, res) {
+    Quote.find(function(err, quotes) {
+      if (err) {
+        res.json(err)
+      } else {
+        res.json(quotes)
+      }
+    })
+  })
+  .post(function(req, res) {
+    const quote = new Quote(),
+          { driverName, brand, carPrice, rejected, offer } = req.body,
+          date = Date.now()
+
+    quote.driverName = driverName || null
+    quote.brand = brand || null
+    quote.carPrice = carPrice || null
+    quote.rejected = rejected
+    quote.offer = offer || null
+    quote.date = date || null
+
+    quote.save((err) => {
+      if (err) {
+        res.json(err)
+      } else {
+        res.json({ message: 'Quote added succesfully' })
+      }
+    })
   })
 
 app.use('/api', router)
 
-app.listen(port, function() {
+app.listen(port, () => {
   console.log(`api running on port ${port}`)
 })

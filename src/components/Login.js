@@ -21,8 +21,8 @@ class Login extends React.Component {
           body = { username, password }
     axios.post('http://localhost:3001/api/login', body)
       .then((response) => {
-        const { status, user } = response.data.login
-        const { login } = this.props
+        const { status, user } = response.data.login,
+              { login } = this.props
         if (status==='fail') {
           this.setState({ loginError: true })
         } else if (status==='success') {
@@ -30,7 +30,7 @@ class Login extends React.Component {
         }
       })
       .catch((error) => {
-        console.log('Error:', error)
+        //
       })
   }
 
@@ -38,22 +38,22 @@ class Login extends React.Component {
     const { user } = this.props,
           { loginError } = this.state
     if (user) {
-      return <Redirect to="/" />
+      return <Redirect to='/' />
     } else {
       return (
         <section>
           <FormGroup className={ loginError ? 'has-error' : '' }>
-            <FormControl placeholder="Enter your username..."
+            <FormControl placeholder='Enter your username...'
                          onChange={ (e) => this.setState({ username: e.target.value, loginError: false }) }>
             </FormControl>
           </FormGroup>
           <FormGroup className={ loginError ? 'has-error' : '' }>
-            <FormControl placeholder="...and your password." 
+            <FormControl placeholder='...and your password.' 
                          onChange={ (e) => this.setState({ password: e.target.value, loginError: false })}
-                         type="password" />
+                         type='password' />
           </FormGroup>
-          <Button bsStyle="primary"
-                  className="pull-right full-width"
+          <Button bsStyle='primary'
+                  className='pull-right full-width'
                   onClick={ this.handleSubmit }>
             Login
           </Button>

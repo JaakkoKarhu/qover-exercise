@@ -1,9 +1,9 @@
 'use strict'
 
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
+const mongoose = require('mongoose'),
+      { Schema } = mongoose
 
-var QuoteSchema = new Schema({
+const QuoteSchema = new Schema({
   driverName: String,
   date: String,
   brand: String,
